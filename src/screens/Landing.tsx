@@ -11,7 +11,7 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { connect } from 'react-redux';
-import {BaseApp_decrement, BaseApp_increment, BaseApp_setValue} from '../reducers/CounterReducer';
+import {getAction} from '../reducers/TransactionReducer';
 
 import {
   SafeAreaView,
@@ -31,6 +31,10 @@ import {
 
 import { HttpServices } from 'sharedLibs/src/services/http.services';
 import { commonStyles } from 'sharedLibs/src/style';
+import { RootState } from '../store';
+import { navigationList } from '../navigationList';
+import { TransactionAction } from '../actions/transaction.action';
+import { TransactionModel } from '../interface/transaction.interface';
 
 
 
@@ -40,6 +44,8 @@ interface Props {
   increment: any,
   decrement: any,
   setValue: any,
+  setTransaction:Function,
+  transactionId:any
 }
 
 declare const global: {HermesInternal: null | {}};
@@ -87,6 +93,9 @@ class Landing extends React.Component<Props> {
                 <Text style={commonStyles.content}>
                     Test Redux Counter: {this.props.counter}
                 </Text>
+                <Text style={commonStyles.content}>
+                    Test Redux TransactionId: {this.props.transactionId}
+                </Text>
               </View>
 
               <Button
@@ -109,11 +118,18 @@ class Landing extends React.Component<Props> {
                   this.props.setValue(88)
                 }
               />
+
+              <Button
+                title="set Transaction"
+                onPress={() =>
+                  this.props.setTransaction({counter:999, transactionId:12312312})
+                }
+              />
               
               <Button
                 title="Go to Container Step 2"
                 onPress={() =>
-                  this.props.navigation.navigate('BaseApp_Page2')
+                  this.props.navigation.navigate(navigationList.page2)
                 }
               />
             </View>
@@ -124,21 +140,24 @@ class Landing extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state:any) => {
-  const { counter } = state.BaseApp.BaseApp
-  return { counter }
+const mapStateToProps = (state:RootState) => {
+  const { counter, transactionId } = state.BaseApp_transaction
+  return { counter, transactionId }
 };
 
 const mapDispatchToProps = (dispatch: (arg0: { payload: number | undefined; type: string; }) => void) => {
   return {
     increment: () => {
-      dispatch(BaseApp_increment())
+      dispatch(getAction(TransactionAction.increaseCounter))
     },
     decrement: () => {
-      dispatch(BaseApp_decrement())
+      dispatch(getAction(TransactionAction.decreseCounter))
     },
     setValue: (val:number) => {
-      dispatch(BaseApp_setValue(val))
+      dispatch(getAction(TransactionAction.setCounter,val))
+    },
+    setTransaction: (val:TransactionModel) => {
+      dispatch(getAction(TransactionAction.setTransaction,{counter:999, transactionId:12312312}))
     }
   }
 }

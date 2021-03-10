@@ -1,12 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit'
-import CounterReducer from './reducers/CounterReducer'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import reducers from './reducers' 
 
+let totalReducers = {...reducers};
 
 const store = configureStore({
-  reducer: {
-    // Define a top-level state field named `todos`, handled by `todosReducer`
-    BaseApp: CounterReducer
-  }
+  reducer: combineReducers(totalReducers)
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

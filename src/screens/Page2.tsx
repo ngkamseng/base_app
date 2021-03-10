@@ -9,12 +9,16 @@ import {
 } from 'react-native';
 import { HttpServices } from 'sharedLibs/src/services/http.services';
 import { commonStyles } from 'sharedLibs/src/style'
+import { LoginAction } from '../actions/login.action';
+import { TransactionAction } from '../actions/transaction.action';
 
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { BaseApp_decrement, BaseApp_increment, BaseApp_setValue } from '../reducers/CounterReducer';
+import { getLoginAction } from '../reducers/LoginReducer';
+import { getAction } from '../reducers/TransactionReducer';
 
 const Page2 = () => {
-  const counter = useAppSelector(state => state.BaseApp.BaseApp.counter)
+  const counter = useAppSelector(state => state.BaseApp_transaction.counter)
+  const {userId, token } = useAppSelector(state => state.BaseApp_login)
   const dispatch = useAppDispatch()
   const [title, setTitle] = useState("Test");
 
@@ -49,24 +53,51 @@ const Page2 = () => {
               </Text>
             </View>
 
+            <View>
+              <Text style={commonStyles.content}>
+                  UserId: {userId}
+              </Text>
+            </View>
+
+            <View>
+              <Text style={commonStyles.content}>
+                  Token: {token}
+              </Text>
+            </View>
+
+
             <Button
                 title="Increase Counter"
                 onPress={() =>
-                  dispatch(BaseApp_increment())
+                  dispatch(getAction(TransactionAction.increaseCounter))
                 }
               />
 
               <Button
                 title="derease Counter"
                 onPress={() =>
-                  dispatch(BaseApp_decrement())
+                  dispatch(getAction(TransactionAction.decreseCounter))
                 }
               />
 
               <Button
                 title="set Counter"
                 onPress={() =>
-                  dispatch(BaseApp_setValue(99))
+                  dispatch(getAction(TransactionAction.setCounter, 99))
+                }
+              />
+
+              <Button
+                title="set Transaction"
+                onPress={() =>
+                  dispatch(getAction(TransactionAction.setTransaction, {counter:9999, transactionId:1234567890}))
+                }
+              />
+
+              <Button
+                title="set Token"
+                onPress={() =>
+                  dispatch(getLoginAction(LoginAction.setToken, "asdfghjkl"))
                 }
               />
           </View>
