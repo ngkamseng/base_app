@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { HttpServices } from 'sharedLibs/src/services/http.services';
+import { StateServices } from 'sharedLibs/src/services/state.services';
 import { commonStyles } from 'sharedLibs/src/style'
 import { LoginAction } from '../actions/login.action';
 import { TransactionAction } from '../actions/transaction.action';
@@ -21,6 +22,10 @@ const Page2 = () => {
   const {userId, token } = useAppSelector(state => state.BaseApp_login)
   const dispatch = useAppDispatch()
   const [title, setTitle] = useState("Test");
+
+  const stateService = new StateServices();
+  const [sharedToken, setSharedToken] = useState(stateService.getLoginToken());
+  //const sharedToken = stateService.getLoginToken();
 
   function getTitle() {
     let httpServices = new HttpServices();
@@ -65,6 +70,12 @@ const Page2 = () => {
               </Text>
             </View>
 
+            <View>
+              <Text style={commonStyles.content}>
+                  Shared Token from Services: {sharedToken}
+              </Text>
+            </View>
+
 
             <Button
                 title="Increase Counter"
@@ -100,6 +111,16 @@ const Page2 = () => {
                   dispatch(getLoginAction(LoginAction.setToken, "asdfghjkl"))
                 }
               />
+
+              <Button
+                title="set Token from shared service"
+                onPress={() => {
+                    stateService.setLoginToken(new Date().getTime().toString());
+                    setSharedToken(stateService.getLoginToken())
+                  }
+                }
+              />
+
           </View>
         </ScrollView>
       </SafeAreaView>
